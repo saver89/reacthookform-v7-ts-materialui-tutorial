@@ -2,7 +2,7 @@
 // index.tsx
 import { FC } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import TextField from '@material-ui/core';
+import { TextField } from '@material-ui/core';
 import Head from 'next/head';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import * as yup from 'yup';
@@ -49,7 +49,7 @@ const Home: FC = () => {
             render={(field) => {
               return (
                 <TextField
-                  {...field}
+                  defaultValue="user@test.com"
                   label="email"
                   variant="outlined"
                   error={!!errors.email}
@@ -60,7 +60,21 @@ const Home: FC = () => {
           />
           <br />
           <br />
-          <input {...register('password')} />
+          <Controller
+            name="password"
+            control={control}
+            render={(field) => {
+              return (
+                <TextField
+                  type="password"
+                  label="password"
+                  variant="outlined"
+                  error={!!errors.password}
+                  helperText={errors.password ? errors.password?.message : ''}
+                />
+              );
+            }}
+          />
           <br />
           <span>{errors?.password?.message}</span>
           <br />
