@@ -2,8 +2,9 @@
 // index.tsx
 import { FC } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
+import TextField from '@material-ui/core';
 import Head from 'next/head';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import styles from '../styles/Home.module.css';
 
@@ -14,12 +15,13 @@ interface IFormInputs {
 
 const schema = yup.object().shape({
   email: yup.string().required(),
-  password: yup.string().required(),
+  password: yup.string().required().min(4),
 });
 
 const Home: FC = () => {
   const {
     register,
+    control,
     watch,
     handleSubmit,
     formState: { errors },
@@ -40,12 +42,27 @@ const Home: FC = () => {
 
       <main className={styles.main}>
         <form onSubmit={handleSubmit(FormSubmitHandler)}>
-          <input defaultValue="user@test.com" {...register('email')} />
+          <Controller
+            name="email"
+            control={control}
+            defaultValue="user@test.com"
+            render={(field) => {
+              return (
+                <TextField
+                  {...field}
+                  label="email"
+                  variant="outlined"
+                  error={!!errors.email}
+                  helperText={errors.email ? errors.email?.message : ''}
+                />
+              );
+            }}
+          />
           <br />
           <br />
-          <input {...register('password', { required: true })} />
+          <input {...register('password')} />
           <br />
-          {errors.password && <span>Password required</span>}
+          <span>{errors?.password?.message}</span>
           <br />
           <input type="submit" />
         </form>
