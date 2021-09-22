@@ -46,11 +46,11 @@ const Home: FC = () => {
             name="email"
             control={control}
             defaultValue="user@test.com"
-            render={(field) => {
+            render={({ field }) => {
               return (
                 <TextField
-                  defaultValue="user@test.com"
-                  label="email"
+                  {...field}
+                  label="Email"
                   variant="outlined"
                   error={!!errors.email}
                   helperText={errors.email ? errors.email?.message : ''}
@@ -63,11 +63,12 @@ const Home: FC = () => {
           <Controller
             name="password"
             control={control}
-            render={(field) => {
+            render={({ field }) => {
               return (
                 <TextField
+                  {...field}
                   type="password"
-                  label="password"
+                  label="Password"
                   variant="outlined"
                   error={!!errors.password}
                   helperText={errors.password ? errors.password?.message : ''}
