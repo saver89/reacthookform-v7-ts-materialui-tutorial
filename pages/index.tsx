@@ -2,10 +2,10 @@
 // index.tsx
 import { FC } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { TextField } from '@material-ui/core';
 import Head from 'next/head';
-import { useForm, SubmitHandler, Controller } from 'react-hook-form';
+import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import * as yup from 'yup';
+import FormInput from '@src/components/FormInput';
 import styles from '../styles/Home.module.css';
 
 interface IFormInputs {
@@ -13,25 +13,19 @@ interface IFormInputs {
   password: string;
 }
 
-const schema = yup.object().shape({
+const schema: yup.SchemaOf<IFormInputs> = yup.object().shape({
   email: yup.string().required(),
   password: yup.string().required().min(4),
 });
 
 const Home: FC = () => {
-  const {
-    register,
-    control,
-    watch,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<IFormInputs>({ resolver: yupResolver(schema) });
+  const methods = useForm<IFormInputs>({ resolver: yupResolver(schema) });
 
   const FormSubmitHandler: SubmitHandler<IFormInputs> = (data: IFormInputs) => {
     console.log('form data', data);
   };
 
-  console.log('email', watch('email'));
+  console.log('email', methods.watch('email'));
 
   return (
     <div className={styles.container}>
@@ -41,46 +35,17 @@ const Home: FC = () => {
       </Head>
 
       <main className={styles.main}>
-        <form onSubmit={handleSubmit(FormSubmitHandler)}>
-          <Controller
-            name="email"
-            control={control}
-            defaultValue="user@test.com"
-            render={({ field }) => {
-              return (
-                <TextField
-                  {...field}
-                  label="Email"
-                  variant="outlined"
-                  error={!!errors.email}
-                  helperText={errors.email ? errors.email?.message : ''}
-                />
-              );
-            }}
-          />
-          <br />
-          <br />
-          <Controller
-            name="password"
-            control={control}
-            render={({ field }) => {
-              return (
-                <TextField
-                  {...field}
-                  type="password"
-                  label="Password"
-                  variant="outlined"
-                  error={!!errors.password}
-                  helperText={errors.password ? errors.password?.message : ''}
-                />
-              );
-            }}
-          />
-          <br />
-          <span>{errors?.password?.message}</span>
-          <br />
-          <input type="submit" />
-        </form>
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(FormSubmitHandler)}>
+            <FormInput name="email" defaultValue="test@test" label="Email" type="email" />
+            <br />
+            <br />
+            <FormInput name="password" defaultValue="" label="Password" type="password" />
+            <br />
+            <br />
+            <input type="submit" />
+          </form>
+        </FormProvider>
       </main>
 
       <footer className={styles.footer}>
